@@ -4,11 +4,12 @@
   "description": "Covid virus tracking",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "NODE_ENV=test mocha"
   },
   "author": "Matt Jordan",
   "license": "Person",
   "dependencies": {
+    "assert": "^2.0.0",
     "basic-auth": "^2.0.1",
     "bcrypt": "^5.0.0",
     "bunyan": "^1.8.12",
@@ -17,6 +18,7 @@
     "express": "^4.17.1",
     "http": "0.0.1-security",
     "http-shutdown": "^1.2.2",
+    "mocha": "^8.0.1",
     "path": "^0.12.7",
     "swagger-express-mw": "^0.7.0",
     "util": "^0.12.3"

@@ -3,5 +3,11 @@ module.exports = {
   log: {
     level: 'silent',
     logUncaughtException: false
+  },
+  app: {
+    credentials: {
+      name: 'test',
+      password: 'not-secret'
+    }
   }
 };
