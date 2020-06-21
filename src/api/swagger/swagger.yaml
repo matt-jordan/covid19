@@ -18,10 +18,30 @@ securityDefinitions:
 security:
   - basicAuth: []
 paths:
+  '/countries/{pathCountry}':
+    x-swagger-router-controller: countries
+    get:
+      description: Get the history of the specified country
+      operationId: getHistory
+      parameters:
+        - $ref: '#/parameters/pathCountry'
+      responses:
+        '200':
+          description: Successful request
+          schema:
+            $ref: '#/definitions/CountryHistory'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Forbidden'
+        '404':
+          $ref: '#/responses/NotFound'
+        default:
+          $ref: '#/responses/GeneralError'
   '/states':
     x-swagger-router-controller: states
     get:
-      description: Retrieve a list of states.
+      description: Retrieve a list of states and their most recent status.
       operationId: list
       parameters:
         - $ref: '#/parameters/queryAuthUserId'
@@ -41,6 +61,12 @@ paths:
   /swagger:
     x-swagger-pipe: swagger_raw
 parameters:
+  pathCountry:
+    name: pathCountry
+    in: path
+    description: Country code or name of the country to retrieve
+    type: string
+    required: true
   queryAuthUserId:
     name: queryUserId
     in: query
@@ -58,7 +84,7 @@ parameters:
     type: integer
 responses:
   BadRequest:
-    description: BadRequest
+    description: Bad Request
     schema:
       $ref: '#/definitions/ErrorResponse'
   Forbidden:
@@ -69,17 +95,46 @@ responses:
     description: Error
     schema:
       $ref: '#/definitions/ErrorResponse'
+  NotFound:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/ErrorResponse'
   Unauthorized:
     description: Unauthorized
     schema:
       $ref: '#/definitions/ErrorResponse'
 definitions:
+  CountryHistory:
+    required: [ name ]
+    description: History of a particular country
+    properties:
+      name:
+        description: Name of the country
+        type: string
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/History'
   ErrorResponse:
     required:
       - message
     properties:
       message:
         type: string
+  History:
+    description: A history entry of the disease for some location
+    required: [ date, cases, deaths ]
+    properties:
+      date:
+        description: The day the history entry was made
+        type: string
+        format: date
+      cases:
+        description: How many cases occurred
+        type: integer
+      deaths:
+        description: How many died
+        type: integer
   Pagination:
     properties:
       pageSize:

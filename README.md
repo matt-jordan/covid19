@@ -4,6 +4,26 @@ Coronavirus visualization.
 
 I got tired of sites with Ads or sites with poor data visualization. Hence a new one.
 
+# Data
+
+This uses the NYTimes [Corona-19 Virus](https://github.com/nytimes/covid-19-data) data. An initial
+dataset take from that repo is located in `src/models/data`.
+
+TODO: Make it update periodically.
+
+# Testing
+
+Testing is done using `mocha`, which is invoked using `npm`:
+
+```
+$ npm run test
+```
+
 # Deployment
 
+Configuration can be set through the following environment variables:
 
+* `LOG_LEVEL`: String. Bunyan log output level. Defaults to `debug`.
+* `LOG_PRETTY`: Boolean. Whether or not to prettify log output.
+* `NODE_ENV`: The config environment to use. Defaults to `development`.
+* `PORT`: The port to listen on. Defaults to `3000`.
