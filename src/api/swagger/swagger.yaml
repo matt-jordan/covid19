@@ -1,0 +1,108 @@
+swagger: '2.0'
+info:
+  version: '1.0.0'
+  title: Covide Service
+host: localhost:3000
+basePath: /v1
+schemes:
+  # NOTE: remove http to make production-grade
+  - http
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+securityDefinitions:
+  basicAuth:
+    type: basic
+security:
+  - basicAuth: []
+paths:
+  '/states':
+    x-swagger-router-controller: states
+    get:
+      description: Retrieve a list of states.
+      operationId: list
+      parameters:
+        - $ref: '#/parameters/queryAuthUserId'
+        - $ref: '#/parameters/queryPage'
+        - $ref: '#/parameters/queryPageSize'
+      responses:
+        '200':
+          description: Successful request
+          schema:
+            $ref: '#/definitions/StateList'
+        '401':
+          $ref: '#/responses/Unauthorized'
+        '403':
+          $ref: '#/responses/Forbidden'
+        default:
+          $ref: '#/responses/GeneralError'
+  /swagger:
+    x-swagger-pipe: swagger_raw
+parameters:
+  queryAuthUserId:
+    name: queryUserId
+    in: query
+    description: The ID of the User who is authorizing the request
+    type: string
+  queryPage:
+    name: queryPage
+    in: query
+    description: Which page of results to retrieve
+    type: integer
+  queryPageSize:
+    name: queryPageSize
+    in: query
+    description: How many results to retrieve in a page. Defaults to 20.
+    type: integer
+responses:
+  BadRequest:
+    description: BadRequest
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  Forbidden:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  GeneralError:
+    description: Error
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+  Unauthorized:
+    description: Unauthorized
+    schema:
+      $ref: '#/definitions/ErrorResponse'
+definitions:
+  ErrorResponse:
+    required:
+      - message
+    properties:
+      message:
+        type: string
+  Pagination:
+    properties:
+      pageSize:
+        description: Size of the page
+        type: integer
+      pageCount:
+        description: How many pages are in the set
+        type: integer
+      page:
+        description: Which page in the response set this set corresponds to
+        type: integer
+  State:
+    description: A state
+    properties:
+      name:
+        description: The name of the state
+        type: string
+  StateList:
+    description: A list of states.
+    properties:
+      items:
+        type: array
+        items:
+          $ref: '#/definitions/State'
+      pagination:
+          $ref: '#/definitions/Pagination'
