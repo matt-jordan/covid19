@@ -10,73 +10,126 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script>
 
-$( document ).ready(function() {
-    $.ajax({
+let dates;
+let deaths;
+let dailyDeaths;
+let cases;
+let dailyCases;
+let chart;
+
+function gatherData() {
+    return $.ajax({
+        // TODO: Get this from the config (injection!)
         url: 'http://localhost:3000/v1/countries/US',
         headers: {
+            // TODO: Don't do this.
             "Authorization": "Basic " + btoa("foo:bar")
         },
     }).then(function(data) {
-        var ctx = document.getElementById('usPlot').getContext('2d');
-        var dates = data.items.map(function(value) {
+        dates = data.items.map(function(value) {
             return value.date;
         });
-        var cases = data.items.map(function(value) {
+
+        deaths = data.items.map(function(value) {
+            return value.deaths;
+        });
+        dailyDeaths = data.items.map(function(value, index) {
+            if (index === 0) {
+                return value.deaths;
+            }
+            return value.deaths - data.items[index - 1].deaths;
+        });
+
+        cases = data.items.map(function(value) {
             return value.cases;
         });
-        var differences = data.items.map(function(value, index) {
+        dailyCases = data.items.map(function(value, index) {
             if (index === 0) {
                 return value.cases;
             }
             return value.cases - data.items[index - 1].cases;
         });
+    });
+}
 
-        var myChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: dates,
-                datasets: [{
-                    label: 'Cumulative Cases',
-                    data: cases,
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                    ],
-                    borderWidth: 1,
-                    yAxisID: 'caseTotal'
+function drawGraph() {
+    const canvas = document.getElementById('usPlot');
+    const ctx = canvas.getContext('2d');
+
+    let cumulativeData;
+    let dailyData;
+    let selection;
+
+    const optCases = document.getElementById('optCases');
+    if (optCases.checked) {
+        cumulativeData = cases;
+        dailyData = dailyCases;
+        selection = 'Cases';
+    } else {
+        cumulativeData = deaths;
+        dailyData = dailyDeaths;
+        selection = 'Deaths';
+    }
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dates,
+            datasets: [{
+                label: `Cumulative ${selection}`,
+                data: [...cumulativeData],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                ],
+                borderWidth: 1,
+                yAxisID: 'total'
+            }, {
+                label: `Daily ${selection}`,
+                data: [...dailyData],
+                backgroundColor: [
+                    'rgba(99, 132, 255, 0.2)',
+                ],
+                borderColor: [
+                    'rgba(99, 132, 255, 1)',
+                ],
+                borderWidth: 1,
+                yAxisID: 'daily'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    id: 'total',
+                    position: 'left',
+                    ticks: {
+                        beginAtZero: true
+                    }
                 }, {
-                    label: 'Daily Cases',
-                    data: differences,
-                    backgroundColor: [
-                        'rgba(99, 132, 255, 0.2)',
-                    ],
-                    borderColor: [
-                        'rgba(99, 132, 255, 1)',
-                    ],
-                    borderWidth: 1,
-                    yAxisID: 'caseDaily'
+                    id: 'daily',
+                    position: 'right',
+                    ticks: {
+                        beginAtZero: true
+                    }
                 }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        id: 'caseTotal',
-                        position: 'left',
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }, {
-                        id: 'caseDaily',
-                        position: 'right',
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
             }
-        });
+        }
+    });
+}
+
+function redrawGraph() {
+    drawGraph();
+}
+
+$( document ).ready(function() {
+    gatherData().then(function() {
+        drawGraph();
     });
 });
 
@@ -89,8 +142,21 @@ $( document ).ready(function() {
 </header>
 
 <main>
-    <div class="jumbotron">
-        <canvas id="usPlot"></canvas>
+    <div class="row">
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+            <label>
+                <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" />Cases
+            </label>
+            <label>
+                <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />Deaths
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron">
+            <canvas id="usPlot"></canvas>
+        </div>
     </div>
 </main>
 
