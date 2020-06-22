@@ -17,6 +17,15 @@ module.exports.boot = async () => {
   });
   app.set('trust proxy', true);
 
+  app.set('view engine', 'ejs');
+  app.set('views', path.join(__dirname, 'app/views'));
+  app.get('/', (req, res) => {
+    res.render('pages/index');
+  });
+  app.get('/us', (req, res) => {
+    res.render('pages/us');
+  });
+
   const swaggerCreateAsync = util.promisify(SwaggerExpress.create);
   const swaggerExpress = await swaggerCreateAsync({
     appRoot: __dirname,

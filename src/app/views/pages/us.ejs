@@ -1,0 +1,102 @@
+<!-- views/pages/us.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+$( document ).ready(function() {
+    $.ajax({
+        url: 'http://localhost:3000/v1/countries/US',
+        headers: {
+            "Authorization": "Basic " + btoa("foo:bar")
+        },
+    }).then(function(data) {
+        var ctx = document.getElementById('usPlot').getContext('2d');
+        var dates = data.items.map(function(value) {
+            return value.date;
+        });
+        var cases = data.items.map(function(value) {
+            return value.cases;
+        });
+        var differences = data.items.map(function(value, index) {
+            if (index === 0) {
+                return value.cases;
+            }
+            return value.cases - data.items[index - 1].cases;
+        });
+
+        var myChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: dates,
+                datasets: [{
+                    label: 'Cumulative Cases',
+                    data: cases,
+                    backgroundColor: [
+                        'rgba(255, 99, 132, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(255, 99, 132, 1)',
+                    ],
+                    borderWidth: 1,
+                    yAxisID: 'caseTotal'
+                }, {
+                    label: 'Daily Cases',
+                    data: differences,
+                    backgroundColor: [
+                        'rgba(99, 132, 255, 0.2)',
+                    ],
+                    borderColor: [
+                        'rgba(99, 132, 255, 1)',
+                    ],
+                    borderWidth: 1,
+                    yAxisID: 'caseDaily'
+                }]
+            },
+            options: {
+                scales: {
+                    yAxes: [{
+                        id: 'caseTotal',
+                        position: 'left',
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }, {
+                        id: 'caseDaily',
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true
+                        }
+                    }]
+                }
+            }
+        });
+    });
+});
+
+</script>
+
+<body class="container">
+
+<header>
+    <%- include('../partials/header') %>
+</header>
+
+<main>
+    <div class="jumbotron">
+        <canvas id="usPlot"></canvas>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer') %>
+</footer>
+
+</body>
+</html>
