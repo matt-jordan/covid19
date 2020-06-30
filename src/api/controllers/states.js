@@ -1,9 +1,17 @@
 
-function list (req, res) {
+const State = require('../../models/State');
 
-  res.json([]);
+function listStates (req, res) {
+
+  State.getLastHistory()
+    .then((history) => {
+      res.json({
+        items: history
+      });
+    });
+
 }
 
 module.exports = {
-  list: list,
+  listStates,
 }

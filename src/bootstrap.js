@@ -5,6 +5,7 @@ const express = require('express');
 const SwaggerExpress = require('swagger-express-mw');
 
 const log = require('./lib/log');
+const Refresher = require('./lib/refresher');
 const basicAuth = require('./lib/middleware/basicAuth');
 const errors = require('./lib/middleware/errors');
 
@@ -25,6 +26,12 @@ module.exports.boot = async () => {
   app.get('/us', (req, res) => {
     res.render('pages/us');
   });
+  app.get('/states', (req, res) => {
+    res.render('pages/states');
+  });
+
+  const refresher = new Refresher();
+  refresher.start();
 
   const swaggerCreateAsync = util.promisify(SwaggerExpress.create);
   const swaggerExpress = await swaggerCreateAsync({

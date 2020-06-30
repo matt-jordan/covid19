@@ -1,0 +1,142 @@
+<!-- views/pages/us.ejs -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head') %>
+</head>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+
+let stateData;
+let date;
+let chart;
+
+function gatherData() {
+    return $.ajax({
+        // TODO: Get this from the config (injection!)
+        url: 'http://localhost:3000/v1/states',
+        headers: {
+            // TODO: Don't do this.
+            "Authorization": "Basic " + btoa("foo:bar")
+        },
+    }).then(function(data) {
+        date = data.items[0].date;
+
+        stateData = data.items;
+    });
+}
+
+function drawGraph() {
+    const canvas = document.getElementById('statesPlot');
+    const ctx = canvas.getContext('2d');
+
+    const dateLabel = document.getElementById('lblDate');
+    dateLabel.value = date;
+
+    let graphData;
+
+    const optCases = document.getElementById('optCases');
+    if (optCases.checked) {
+        stateData.sort(function(a, b) {
+            return a.cases < b.cases;
+        });
+        graphData = stateData.map(function(d) {
+            return d.cases;
+        });
+        selection = 'Cases';
+    } else {
+        stateData.sort(function(a, b) {
+            return a.deaths < b.deaths;
+        });
+        graphData = stateData.map(function(d) {
+            return d.deaths;
+        })
+        selection = 'Deaths';
+    }
+    const labels = stateData.map(function (d) {
+        return d.state;
+    });
+
+    if (chart) {
+        chart.destroy();
+    }
+
+    // TODO: We should let this show the state data
+    // on any given day, then show the difference in
+    // how it grew on that day.
+
+    chart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: `Cumulative ${selection}`,
+                data: [...graphData],
+                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+                yAxisID: 'total'
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    id: 'total',
+                    position: 'left',
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+}
+
+function redrawGraph() {
+    drawGraph();
+}
+
+$( document ).ready(function() {
+    gatherData().then(function() {
+        drawGraph();
+    });
+});
+
+</script>
+
+<body class="container">
+
+<header>
+    <%- include('../partials/header') %>
+</header>
+
+<main>
+    <div class="row">
+        <div class="col-md-4">
+            <label id="lblDate"></label>
+        </div>
+        <div class="col-md-8">
+            <label>
+                <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" />Cases
+            </label>
+            <label>
+                <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />Deaths
+            </label>
+        </div>
+    </div>
+    <div class="row">
+        <div class="jumbotron">
+            <canvas id="statesPlot"></canvas>
+        </div>
+    </div>
+</main>
+
+<footer>
+    <%- include('../partials/footer') %>
+</footer>
+
+</body>
+</html>

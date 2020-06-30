@@ -42,11 +42,7 @@ paths:
     x-swagger-router-controller: states
     get:
       description: Retrieve a list of states and their most recent status.
-      operationId: list
-      parameters:
-        - $ref: '#/parameters/queryAuthUserId'
-        - $ref: '#/parameters/queryPage'
-        - $ref: '#/parameters/queryPageSize'
+      operationId: listStates
       responses:
         '200':
           description: Successful request
@@ -152,6 +148,8 @@ definitions:
       name:
         description: The name of the state
         type: string
+      current:
+        $ref: '#/definitions/History'
   StateList:
     description: A list of states.
     properties:

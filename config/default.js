@@ -10,6 +10,7 @@ module.exports = {
   app: {
     credentials: {
     },
+    pollingTimer: 600,
   },
   port: 3000,
   serviceName: 'covid-service',
