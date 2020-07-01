@@ -9,6 +9,8 @@ const Refresher = require('./lib/refresher');
 const basicAuth = require('./lib/middleware/basicAuth');
 const errors = require('./lib/middleware/errors');
 
+const router = require('./app/router');
+
 module.exports.boot = async () => {
 
   const app = express();
@@ -20,15 +22,7 @@ module.exports.boot = async () => {
 
   app.set('view engine', 'ejs');
   app.set('views', path.join(__dirname, 'app/views'));
-  app.get('/', (req, res) => {
-    res.render('pages/index');
-  });
-  app.get('/us', (req, res) => {
-    res.render('pages/us');
-  });
-  app.get('/states', (req, res) => {
-    res.render('pages/states');
-  });
+  app.use('/', router);
 
   const refresher = new Refresher();
   refresher.start();
