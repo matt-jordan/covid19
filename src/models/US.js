@@ -3,6 +3,8 @@ const path = require('path');
 const getStream = require('get-stream');
 const csvParser = require('csv-parse');
 
+const log = require('../lib/log');
+
 let history = [];
 
 class US {
@@ -10,12 +12,34 @@ class US {
   static updateHistory(data) {
     data.shift();
 
-    history = data.map(d => {
+    // Because this will also update the history in place, we iterate over
+    // the elements, looking for them in our current history. If we find a
+    // match we update it; otherwise we add it.
+    data.map(d => {
       return {
         date: d[0],
         cases: parseInt(d[1], 10),
         deaths: parseInt(d[2], 10),
       };
+    }).forEach(d => {
+      const index = history.findIndex((h) => h.date === d.date);
+
+      if (index < 0) {
+        log.debug({ d }, 'Adding new');
+        history.push(d);
+        return;
+      }
+      log.debug({ d }, 'Updating');
+      history[index] = d;
+    });
+
+    history.sort((d1, d2) => {
+      if (d1.date < d2.date) {
+        return -1;
+      } else if (d1.date > d2.date) {
+        return 1;
+      }
+      return 0;
     });
 
     return history;
@@ -36,7 +60,7 @@ class US {
   }
 
   static updateLive(data) {
-
+    US.updateHistorical(data);
   }
 
   static updateHistorical(data) {
