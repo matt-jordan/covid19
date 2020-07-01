@@ -5,7 +5,7 @@ const express = require('express');
 const SwaggerExpress = require('swagger-express-mw');
 
 const log = require('./lib/log');
-const Refresher = require('./lib/refresher');
+const refresher = require('./lib/refresher');
 const basicAuth = require('./lib/middleware/basicAuth');
 const errors = require('./lib/middleware/errors');
 
@@ -24,8 +24,8 @@ module.exports.boot = async () => {
   app.set('views', path.join(__dirname, 'app/views'));
   app.use('/', router);
 
-  const refresher = new Refresher();
-  refresher.start();
+  const refresherService = refresher.getRefresher();
+  refresherService.start();
 
   const swaggerCreateAsync = util.promisify(SwaggerExpress.create);
   const swaggerExpress = await swaggerCreateAsync({

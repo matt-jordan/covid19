@@ -23,14 +23,21 @@ const FILES = {
   'covid-19-data-master/us.csv': US.updateHistorical,
 };
 
+let _refresher = null;
+
 class Refresher {
 
   constructor() {
     this.intervalHandler = null;
+    this.refreshTime = null;
+  }
+
+  getLastRefreshTime() {
+    return this.refreshTime.toLocaleString('en-US');
   }
 
   refreshData() {
-    const currentTime = new Date();
+    this.refreshTime = new Date();
     const dataFile = DOWNLOADED_DATA_FILE;
 
     const unlinkPromise = new Promise((resolve, reject) => {
@@ -56,7 +63,7 @@ class Refresher {
     return unlinkPromise
       .then(() => {
         const downloadPromise = new Promise((resolve, reject) => {
-          log.info({ currentTime: currentTime.toISOString() }, 'Pulling new data');
+          log.info({ refreshTime: this.refreshTime.toISOString() }, 'Pulling new data');
           const file = fs.createWriteStream(dataFile)
           https.get(DATA_FILE_LOCATION, (response) => {
             response
@@ -107,6 +114,13 @@ class Refresher {
     }
     clearInterval(this.intervalHandler);
     log.info('Data refresher stopped');
+  }
+
+  static getRefresher() {
+    if (!_refresher) {
+      _refresher = new Refresher();
+    }
+    return _refresher;
   }
 
 }

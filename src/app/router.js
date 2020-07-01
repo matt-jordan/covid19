@@ -1,14 +1,12 @@
 const express = require('express');
 const router = express.Router();
 
-router.get('/', (req, res) => {
-  res.render('pages/index');
-});
-router.get('/us', (req, res) => {
-  res.render('pages/us');
-});
-router.get('/states', (req, res) => {
-  res.render('pages/states');
-});
+const home = require('./controllers/home');
+const us = require('./controllers/us');
+const states = require('./controllers/states');
+
+router.get('/', home);
+router.get('/us', us);
+router.get('/states', states);
 
 module.exports = router;
