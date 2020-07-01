@@ -25,11 +25,9 @@ class US {
       const index = history.findIndex((h) => h.date === d.date);
 
       if (index < 0) {
-        log.debug({ d }, 'Adding new');
         history.push(d);
         return;
       }
-      log.debug({ d }, 'Updating');
       history[index] = d;
     });
 
