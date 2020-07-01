@@ -67,17 +67,40 @@ class State {
     return _history;
   }
 
-  static getHistory() {
+  /**
+   * Get history for states
+   *
+   * @param filter If defined, apply a filter to the results
+   *
+   * @returns Promise(history)
+   */
+  static getHistory(filter) {
+    let historyPromise;
+
     if (_history.length !== 0) {
-      return Promise.resolve(_history);
+      historyPromise = Promise.resolve(_history);
+    } else {
+      const parseStream = csvParser({ delimiter: ',' });
+
+      historyPromise = getStream.array(
+          fs.createReadStream(path.join(__dirname, './data/historical/us-states.csv')).pipe(parseStream)
+        ).then((data) => {
+          return State.updateHistory(data);
+        });
     }
 
-    const parseStream = csvParser({ delimiter: ',' });
+    return historyPromise
+      .then((history) => {
+        if (filter) {
+          if (filter.date) {
+            history = history.filter(d => d.date === filter.date);
+          }
+          if (filter.state) {
+            history = history.filter(d => d.state === filter.state);
+          }
+        }
 
-    return getStream.array(
-        fs.createReadStream(path.join(__dirname, './data/historical/us-states.csv')).pipe(parseStream)
-      ).then((data) => {
-        return State.updateHistory(data);
+        return history;
       });
   }
 
