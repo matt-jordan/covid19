@@ -29,4 +29,4 @@ Configuration can be set through the following environment variables:
 * `LOG_LEVEL`: String. Bunyan log output level. Defaults to `debug`.
 * `LOG_PRETTY`: Boolean. Whether or not to prettify log output.
 * `NODE_ENV`: The config environment to use. Defaults to `development`.
-* `CUSTOM_PORT`: The port to listen on. Defaults to `3000`.
+* `PORT`: The port to listen on. Defaults to `3000`.

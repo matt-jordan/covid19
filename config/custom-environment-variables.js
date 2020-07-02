@@ -1,6 +1,6 @@
 module.exports = {
   port: {
-    __name: 'CUSTOM_PORT',
+    __name: 'PORT',
     __format: 'yml'
   },
   environment: 'NODE_ENV',
