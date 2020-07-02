@@ -19,11 +19,10 @@ let chart;
 
 function gatherData() {
     return $.ajax({
-        // TODO: Get this from the config (injection!)
-        url: 'http://localhost:3000/v1/countries/US',
+        url: "<%= data.config.url %>/v1/countries/US",
         headers: {
             // TODO: Don't do this.
-            "Authorization": "Basic " + btoa("foo:bar")
+            "Authorization": "Basic " + btoa("<%= data.config.credentials.name %>:<%= data.config.credentials.password %>")
         },
     }).then(function(data) {
         dates = data.items.map(function(value) {

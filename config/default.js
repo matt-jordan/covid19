@@ -8,6 +8,7 @@ module.exports = {
     pretty: true
   },
   app: {
+    urlBase: 'http://localhost',
     credentials: {
     },
     pollingTimer: 600,
