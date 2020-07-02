@@ -8,7 +8,7 @@ module.exports = {
     urlBase: 'APP_URL_BASE',
     credentials: {
       name: 'APP_USERNAME',
-      password: 'APP_PASSSWORD',
+      password: 'APP_PASSWORD',
     },
   },
   log: {
