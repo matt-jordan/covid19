@@ -7,7 +7,7 @@ function get (req, res, next) {
   const refreshTime = refresherService.getLastRefreshTime();
 
   let url = config.app.urlBase;
-  if (config.port) {
+  if (config.environment !== 'development' && config.port) {
     url = `${url}:${config.port}`;
   }
 
