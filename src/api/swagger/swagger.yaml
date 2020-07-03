@@ -63,11 +63,6 @@ parameters:
     description: Country code or name of the country to retrieve
     type: string
     required: true
-  queryAuthUserId:
-    name: queryUserId
-    in: query
-    description: The ID of the User who is authorizing the request
-    type: string
   queryPage:
     name: queryPage
     in: query
