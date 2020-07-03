@@ -11,9 +11,27 @@
     <%- include('../partials/header') %>
 </header>
 
+<script>
+
+function gatherData() {
+    return Promise.resolve();
+}
+
+function drawData() {
+
+}
+
+$( document ).ready(function() {
+    gatherData().then(function() {
+        drawData();
+    });
+});
+
+</script>
+
 <main>
-    <div class="jumbotron">
-        <p>Corona Virus Dashboard</p>
+    <div class="jumbotron" id="divMain">
+
     </div>
 </main>
 
