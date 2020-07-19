@@ -126,9 +126,37 @@ function redrawGraph() {
     drawGraph();
 }
 
+function updateCounts() {
+    let eTodayCases = document.getElementById("todayCases");
+    let eYesterdayCases = document.getElementById("yesterdayCases");
+    let eAvgCases = document.getElementById("avgCases");
+    let eTodayDeaths = document.getElementById("todayDeaths");
+    let eYesterdayDeaths = document.getElementById("yesterdayDeaths");
+    let eAvgDeaths = document.getElementById("avgDeaths");
+
+    const todayCases = dailyCases[dailyCases.length - 1];
+    const yesterdayCases = dailyCases[dailyCases.length - 2];
+    const avgCases = dailyCases
+        .slice(dailyCases.length - 9, dailyCases.length - 2)
+        .reduce((a, b) => a + b, 0) / 7;
+    const todayDeaths = dailyDeaths[dailyDeaths.length - 1];
+    const yesterdayDeaths = dailyDeaths[dailyDeaths.length - 2];
+    const avgDeaths = dailyDeaths
+        .slice(dailyDeaths.length - 9, dailyDeaths.length - 2)
+        .reduce((a, b) => a + b, 0) / 7;
+
+    eTodayCases.innerHTML = `${todayCases}`;
+    eYesterdayCases.innerHTML = `${yesterdayCases}`;
+    eAvgCases.innerHTML = `${Math.round(avgCases)}`;
+    eTodayDeaths.innerHTML = `${todayDeaths}`;
+    eYesterdayDeaths.innerHTML = `${yesterdayDeaths}`;
+    eAvgDeaths.innerHTML = `${Math.round(avgDeaths)}`;
+}
+
 $( document ).ready(function() {
     gatherData().then(function() {
         drawGraph();
+        updateCounts();
     });
 });
 
@@ -142,15 +170,68 @@ $( document ).ready(function() {
 
 <main>
     <div class="row">
-        <div class="col-md-4"></div>
-        <div class="col-md-8">
-            <label>
-                <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" checked />Cases
-            </label>
-            <label>
-                <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />Deaths
+        <div class="col-md-2">
+            <h5>Today</h5>
+        </div>
+        <div class="col-md-4">
+            <h5>Yesterday</h5>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label>Cases</label>
+        </div>
+        <div class="col-md-1">
+            <p id="todayCases"></p>
+        </div>
+        <div class="col-md-1">
+            <label>Cases</label>
+        </div>
+        <div class="col-md-1">
+            <p id="yesterdayCases"></p>
+        </div>
+        <div class="col-md-1">
+            <label>7-day Avg</label>
+        </div>
+        <div class="col-md-1">
+            <p id="avgCases"></p>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label>Deaths</label>
+        </div>
+        <div class="col-md-1">
+            <p id="todayDeaths"></p>
+        </div>
+        <div class="col-md-1">
+            <label>Deaths</label>
+        </div>
+        <div class="col-md-1">
+            <p id="yesterdayDeaths"></p>
+        </div>
+        <div class="col-md-1">
+            <label>7-day Avg</label>
+        </div>
+        <div class="col-md-1">
+            <p id="avgDeaths"></p>
+        </div>
+        <div class="col-md-6"></div>
+    </div>
+    <div class="row">
+        <div class="col-md-1">
+            <label>Cases
+                <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" checked />
             </label>
         </div>
+        <div class="col-md-1">
+            <label>Deaths
+                <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />
+            </label>
+        </div>
+        <div class="col-md-10"></div>
     </div>
     <div class="row">
         <div class="jumbotron">
