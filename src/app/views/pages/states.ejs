@@ -15,8 +15,12 @@ let date;
 let chart;
 
 function gatherData() {
+    const dateNow = new Date();
+    const dateMonth = ("00" + (dateNow.getUTCMonth() + 1)).slice(-2);
+    const dateDay = ("00" + dateNow.getUTCDate()).slice(-2);
+    const dateString = `${dateNow.getFullYear()}-${dateMonth}-${dateDay}`;
     return $.ajax({
-        url: "<%= data.config.url %>/v1/states",
+        url: `<%= data.config.url %>/v1/states?startDate=${dateString}`,
         headers: {
             // TODO: Don't do this.
             "Authorization": "Basic " + btoa("<%= data.config.credentials.name %>:<%= data.config.credentials.password %>")

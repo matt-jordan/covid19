@@ -43,6 +43,8 @@ paths:
     get:
       description: Retrieve a list of states and their most recent status.
       operationId: listStates
+      parameters:
+        - $ref: '#/parameters/queryStartDate'
       responses:
         '200':
           description: Successful request
@@ -73,6 +75,12 @@ parameters:
     in: query
     description: How many results to retrieve in a page. Defaults to 20.
     type: integer
+  queryStartDate:
+    name: startDate
+    in: query
+    description: When selecting a range, the date to start the selection
+    type: string
+    format: date
 responses:
   BadRequest:
     description: Bad Request
