@@ -130,9 +130,11 @@ function updateCounts() {
     let eTodayCases = document.getElementById("todayCases");
     let eYesterdayCases = document.getElementById("yesterdayCases");
     let eAvgCases = document.getElementById("avgCases");
+    let eOverallCases = document.getElementById("overallCases");
     let eTodayDeaths = document.getElementById("todayDeaths");
     let eYesterdayDeaths = document.getElementById("yesterdayDeaths");
     let eAvgDeaths = document.getElementById("avgDeaths");
+    let eOverallDeaths = document.getElementById("overallDeaths");
 
     const todayCases = dailyCases[dailyCases.length - 1];
     const yesterdayCases = dailyCases[dailyCases.length - 2];
@@ -145,12 +147,14 @@ function updateCounts() {
         .slice(dailyDeaths.length - 9, dailyDeaths.length - 2)
         .reduce((a, b) => a + b, 0) / 7;
 
-    eTodayCases.innerHTML = `${todayCases}`;
-    eYesterdayCases.innerHTML = `${yesterdayCases}`;
-    eAvgCases.innerHTML = `${Math.round(avgCases)}`;
-    eTodayDeaths.innerHTML = `${todayDeaths}`;
-    eYesterdayDeaths.innerHTML = `${yesterdayDeaths}`;
-    eAvgDeaths.innerHTML = `${Math.round(avgDeaths)}`;
+    eTodayCases.innerHTML = `${todayCases.toLocaleString()}`;
+    eYesterdayCases.innerHTML = `${yesterdayCases.toLocaleString()}`;
+    eAvgCases.innerHTML = `${Math.round(avgCases).toLocaleString()}`;
+    eOverallCases.innerHTML = `${cases[cases.length - 1].toLocaleString()}`;
+    eTodayDeaths.innerHTML = `${todayDeaths.toLocaleString()}`;
+    eYesterdayDeaths.innerHTML = `${yesterdayDeaths.toLocaleString()}`;
+    eAvgDeaths.innerHTML = `${Math.round(avgDeaths).toLocaleString()}`;
+    eOverallDeaths.innerHTML = `${deaths[deaths.length - 1].toLocaleString()}`;
 }
 
 $( document ).ready(function() {
@@ -169,101 +173,61 @@ $( document ).ready(function() {
 </header>
 
 <main>
-    <div class="table-responsive">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th scope="col"></th>
-                    <th scope="col">Cases</th>
-                    <th scope="col">Deaths</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <th scope="row">Today</th>
-                    <td>Lorem</td>
-                    <td>Ipsum</td>
-                </tr>
-                <tr>
-                    <th scope="row">Yesterday</th>
-                    <td>Lorem</td>
-                    <td>Ipsum</td>
-                </tr>
-                <tr>
-                    <th scope="row">7 Day Avg</th>
-                    <td>Lorem</td>
-                    <td>Ipsum</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
     <div class="row">
-        <div class="col-md-2">
-            <h5>Today</h5>
+        <div class="col-md-5">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            <th scope="col">Cases</th>
+                            <th scope="col">Deaths</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">Overall</th>
+                            <td id="overallCases"></td>
+                            <td id="overallDeaths"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Today</th>
+                            <td id="todayCases"></td>
+                            <td id="todayDeaths"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">Yesterday</th>
+                            <td id="yesterdayCases"></td>
+                            <td id="yesterdayDeaths"></td>
+                        </tr>
+                        <tr>
+                            <th scope="row">7 Day Avg</th>
+                            <td id="avgCases"></td>
+                            <td id="avgDeaths"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
-        <div class="col-md-4">
-            <h5>Yesterday</h5>
-        </div>
-        <div class="col-md-6"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-1">
-            <label>Cases</label>
-        </div>
-        <div class="col-md-1">
-            <p id="todayCases"></p>
-        </div>
-        <div class="col-md-1">
-            <label>Cases</label>
-        </div>
-        <div class="col-md-1">
-            <p id="yesterdayCases"></p>
-        </div>
-        <div class="col-md-1">
-            <label>7-day Avg</label>
-        </div>
-        <div class="col-md-1">
-            <p id="avgCases"></p>
-        </div>
-        <div class="col-md-6"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-1">
-            <label>Deaths</label>
-        </div>
-        <div class="col-md-1">
-            <p id="todayDeaths"></p>
-        </div>
-        <div class="col-md-1">
-            <label>Deaths</label>
-        </div>
-        <div class="col-md-1">
-            <p id="yesterdayDeaths"></p>
-        </div>
-        <div class="col-md-1">
-            <label>7-day Avg</label>
-        </div>
-        <div class="col-md-1">
-            <p id="avgDeaths"></p>
-        </div>
-        <div class="col-md-6"></div>
-    </div>
-    <div class="row">
-        <div class="col-md-1">
-            <label>Cases
-                <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" checked />
-            </label>
-        </div>
-        <div class="col-md-1">
-            <label>Deaths
-                <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />
-            </label>
-        </div>
-        <div class="col-md-10"></div>
-    </div>
-    <div class="row">
-        <div class="jumbotron">
-            <canvas id="usPlot"></canvas>
+        <div class="col-md-7">
+            <div class="row">
+                <div class="col-md-8"></div>
+                <div class="col-md-2">
+                    <label>Cases
+                        <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" checked />
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label>Deaths
+                        <input type="radio" id="optDeaths" name="chartData" value="deaths" onclick="redrawGraph()" />
+                    </label>
+                </div>
+            </div>
+            <div class="row">
+                <div class="jumbotron">
+                    <canvas id="usPlot"></canvas>
+                </div>
+            </div>
         </div>
     </div>
 </main>
