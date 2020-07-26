@@ -57,18 +57,32 @@ function drawGraph() {
 
     let cumulativeData;
     let dailyData;
+    let chartDates = dates;
     let selection;
 
     const optCases = document.getElementById('optCases');
     if (optCases.checked) {
-        cumulativeData = cases;
+        cumulativeData = [...cases];
         dailyData = dailyCases;
         selection = 'Cases';
     } else {
-        cumulativeData = deaths;
+        cumulativeData = [...deaths];
         dailyData = dailyDeaths;
         selection = 'Deaths';
     }
+
+    const optTwoMonths = document.getElementById('optTwoMonths');
+    const optTwoWeeks = document.getElementById('optTwoWeeks');
+    let start = 0;
+    if (optTwoMonths.checked && cumulativeData.length > 60) {
+        start = cumulativeData.length - 60;
+    } else if (optTwoWeeks.checked && cumulativeData.length > 14) {
+        start = cumulativeData.length - 14;
+    }
+
+    cumulativeData = cumulativeData.slice(start, cumulativeData.length);
+    dailyData = dailyData.slice(start, dailyData.length);
+    chartDates = chartDates.slice(start, chartDates.length);
 
     if (chart) {
         chart.destroy();
@@ -77,10 +91,10 @@ function drawGraph() {
     chart = new Chart(ctx, {
         type: 'line',
         data: {
-            labels: dates,
+            labels: chartDates,
             datasets: [{
                 label: `Cumulative ${selection}`,
-                data: [...cumulativeData],
+                data: cumulativeData,
                 backgroundColor: [
                     'rgba(255, 99, 132, 0.2)',
                 ],
@@ -91,7 +105,7 @@ function drawGraph() {
                 yAxisID: 'total'
             }, {
                 label: `Daily ${selection}`,
-                data: [...dailyData],
+                data: dailyData,
                 backgroundColor: [
                     'rgba(99, 132, 255, 0.2)',
                 ],
@@ -174,7 +188,7 @@ $( document ).ready(function() {
 
 <main>
     <div class="row">
-        <div class="col-md-5">
+        <div class="col-md-12">
             <div class="table-responsive">
                 <table class="table">
                     <thead>
@@ -209,9 +223,26 @@ $( document ).ready(function() {
                 </table>
             </div>
         </div>
-        <div class="col-md-7">
+    </div>
+    <div class="row">
+        <div class="col-md-12">
             <div class="row">
-                <div class="col-md-8"></div>
+                <div class="col-md-2">
+                    <label>All Time
+                        <input type="radio" id="optAllTime" name="chartTime" value="allTime" onclick="redrawGraph()" checked />
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label>2 Months
+                        <input type="radio" id="optTwoMonths" name="chartTime" value="twoMonths" onclick="redrawGraph()" />
+                    </label>
+                </div>
+                <div class="col-md-2">
+                    <label>2 Weeks
+                        <input type="radio" id="optTwoWeeks" name="chartTime" value="twoWeeks" onclick="redrawGraph()" />
+                    </label>
+                </div>
+                <div class="col-md-2"></div>
                 <div class="col-md-2">
                     <label>Cases
                         <input type="radio" id="optCases" name="chartData" value="cases" onclick="redrawGraph()" checked />
